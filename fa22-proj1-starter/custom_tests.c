@@ -97,22 +97,82 @@ bool test_is_vowel() {
 /* Task 4.1 */
 
 bool test_is_tail() {
-  // TODO: Implement this function.
+    char testcase_1 = 'a';
+    bool output_1 = is_tail(testcase_1);
+    if (!assert_true("output_1", output_1)) {
+        return false;
+    }
+
+    char testcase_2 = 's';
+    bool output_2 = is_tail(testcase_2);
+    if (!assert_true("output_2", output_2)) {
+        return false;
+    }
+    char testcase_3 = 'A';
+    bool output_3 = is_tail(testcase_3);
+    if (!assert_false("output_3", output_3)) {
+        return false;
+    }
   return true;
 }
 
 bool test_is_head() {
-  // TODO: Implement this function.
+    char testcase_1 = 'W';
+    bool output_1 = is_head(testcase_1);
+    if (!assert_true("output_1", output_1)) {
+        return false;
+    }
+
+    char testcase_2 = 'S';
+    bool output_2 = is_head(testcase_2);
+    if (!assert_true("output_2", output_2)) {
+        return false;
+    }
+    char testcase_3 = 'a';
+    bool output_3 = is_head(testcase_3);
+    if (!assert_false("output_3", output_3)) {
+        return false;
+    }
   return true;
 }
 
 bool test_is_snake() {
-  // TODO: Implement this function.
+    char testcase_1 = '>';
+    bool output_1 = is_snake(testcase_1);
+    if (!assert_true("output_1", output_1)) {
+        return false;
+    }
+
+    char testcase_2 = 'v';
+    bool output_2 = is_snake(testcase_2);
+    if (!assert_true("output_2", output_2)) {
+        return false;
+    }
+    char testcase_3 = 'e';
+    bool output_3 = is_snake(testcase_3);
+    if (!assert_false("output_3", output_3)) {
+        return false;
+    }
   return true;
 }
 
 bool test_body_to_tail() {
-  // TODO: Implement this function.
+    char testcase_1 = '^';
+    char output_1 = body_to_tail(testcase_1);
+    if (!assert_equals_char("output_1", 'w', output_1)) {
+        return false;
+    }
+    char testcase_2 = '>';
+    char output_2 = body_to_tail(testcase_2);
+    if (!assert_equals_char("output_2", 'd', output_2)) {
+        return false;
+    }
+    char testcase_3 = 'v';
+    char output_3 = body_to_tail(testcase_3);
+    if (!assert_equals_char("output_3", 's', output_3)) {
+        return false;
+    }
+
   return true;
 }
 

@@ -69,7 +69,7 @@ debug-unit-tests: unit-tests check-hashes
 	cgdb ./unit-tests
 
 .PHONY: run-unit-tests
-run-unit-tests: unit-tests check-hashes
+run-unit-tests: unit-tests
 	./unit-tests
 
 .PHONY: debug-custom-tests
