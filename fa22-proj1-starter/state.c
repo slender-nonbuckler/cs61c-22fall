@@ -295,8 +295,50 @@ void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
 
 /* Task 5 */
 game_state_t* load_board(char* filename) {
-  // TODO: Implement this function.
-  return NULL;
+    size_t row = 0;
+    int col = 0;
+    size_t max_col = 0;
+    char ch;
+    FILE *f = fopen(filename, "r");
+    if (f == NULL) return NULL;
+    //get the row and maximum col of this loaded board
+    while ((ch = fgetc(f)) != EOF) {
+        if (ch == '\n') {
+            row++;
+            if (col > max_col) max_col = col;
+            col = 0; // Reset column count for the next row
+        } else {
+            col++;
+        }
+    }
+    printf("%d\n", max_col);
+    printf("%d\n", row);
+    rewind(f);//return pointer to the beginning
+    game_state_t *state = (game_state_t *)malloc(sizeof(game_state_t));
+    if (state == NULL) return NULL;
+    state->num_rows = row;
+    state->num_snakes = 0;
+    state->snakes = NULL;
+    state->board = (char**) malloc(sizeof(char*) * row);
+    for (int i = 0; i < row; i++){
+        state->board[i] = (char*) malloc(sizeof(char) * (max_col + 1));
+    }
+    row = 0;
+    while ((ch = fgetc(f)) != EOF) {
+        if (ch == '\n'){
+            //each row may have different columns
+            state->board[row] = (char*) realloc(state->board[row], sizeof(char) * (col + 1));
+            state->board[row][col] = '\0';
+            row++;
+            col = 0;
+        }
+        else {
+            state->board[row][col] = ch;
+            col++;
+        }
+    }
+    fclose(f);
+    return state;
 }
 
 /*

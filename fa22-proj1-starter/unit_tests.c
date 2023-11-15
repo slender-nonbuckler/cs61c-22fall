@@ -1172,7 +1172,7 @@ bool test_load_board_3() {
 }
 
 bool test_load_board() {
-  if (!test_load_board_1()) {
+  if (!test_load_board_2()) {
     printf("%s\n",
            "test_load_board_1 failed. Check tests/01-simple-in.snk for a diagram of the board.");
     return false;
