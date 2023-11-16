@@ -295,15 +295,16 @@ void update_state(game_state_t* state, int (*add_food)(game_state_t* state)) {
 
 /* Task 5 */
 game_state_t* load_board(char* filename) {
-    size_t row = 0;
-    int col = 0;
-    size_t max_col = 0;
-    char ch;
+    unsigned int row = 0;
+    unsigned int col = 0;
+    unsigned int max_col = 0;
+    int ch;
     FILE *f = fopen(filename, "r");
     if (f == NULL) return NULL;
     //get the row and maximum col of this loaded board
     while ((ch = fgetc(f)) != EOF) {
-        if (ch == '\n') {
+        char currentChar = (char)ch;
+        if (currentChar == '\n') {
             row++;
             if (col > max_col) max_col = col;
             col = 0; // Reset column count for the next row
@@ -311,34 +312,36 @@ game_state_t* load_board(char* filename) {
             col++;
         }
     }
-    printf("%d\n", max_col);
-    printf("%d\n", row);
+
     rewind(f);//return pointer to the beginning
-    game_state_t *state = (game_state_t *)malloc(sizeof(game_state_t));
-    if (state == NULL) return NULL;
-    state->num_rows = row;
-    state->num_snakes = 0;
-    state->snakes = NULL;
-    state->board = (char**) malloc(sizeof(char*) * row);
+    game_state_t *loadgame = (game_state_t *)malloc(sizeof(game_state_t));
+    if (loadgame == NULL) return NULL;
+    loadgame->num_rows = row;//those have problems
+    loadgame->num_snakes = 0;
+    loadgame->snakes = NULL;
+    loadgame->board = (char**) malloc(sizeof(char*) * row);
     for (int i = 0; i < row; i++){
-        state->board[i] = (char*) malloc(sizeof(char) * (max_col + 1));
+        loadgame->board[i] = (char*) malloc(sizeof(char) * (max_col + 1));
     }
     row = 0;
+    col = 0;
     while ((ch = fgetc(f)) != EOF) {
-        if (ch == '\n'){
+        char currentChar = (char)ch;
+        if (currentChar == '\n'){
             //each row may have different columns
-            state->board[row] = (char*) realloc(state->board[row], sizeof(char) * (col + 1));
-            state->board[row][col] = '\0';
+            loadgame->board[row] = (char*) realloc(loadgame->board[row], sizeof(char) * (col + 1));
+            loadgame->board[row][col] = '\0';
             row++;
             col = 0;
         }
         else {
-            state->board[row][col] = ch;
+
+            loadgame->board[row][col] = currentChar;
             col++;
         }
     }
     fclose(f);
-    return state;
+    return loadgame;
 }
 
 /*
@@ -350,12 +353,43 @@ game_state_t* load_board(char* filename) {
   fill in the head row and col in the struct.
 */
 static void find_head(game_state_t* state, unsigned int snum) {
-  // TODO: Implement this function.
-  return;
+    unsigned int cur_row = state->snakes[snum].tail_row;
+    unsigned int cur_col = state->snakes[snum].tail_col;
+    char ch = get_board_at(state, cur_row, cur_col);
+    unsigned int next_row = cur_row;
+    unsigned int next_col = cur_col;
+    while (!is_head(ch)) {
+        next_row = get_next_row(next_row, ch);
+        next_col = get_next_col(next_col, ch);
+        ch = get_board_at(state, next_row, next_col);
+    }
+    state->snakes[snum].head_col = next_col;
+    state->snakes[snum].head_row = next_row;
+    return;
 }
 
 /* Task 6.2 */
 game_state_t* initialize_snakes(game_state_t* state) {
-  // TODO: Implement this function.
-  return NULL;
+    state->num_snakes = 0;
+    for (int i = 0; i < state->num_rows; i++){
+        for (int j = (int)strlen(state->board[i] - 1);j >= 0; j--) {
+            if (is_tail(get_board_at(state, (unsigned int)i, (unsigned int)j))){
+                state->num_snakes++;
+            }
+        }
+    }
+    state->snakes = malloc(sizeof(snake_t) * state->num_snakes);
+    unsigned int snum = 0;
+    for (int i = 0; i < state->num_rows; i++){
+        for (int j = (int)strlen(state->board[i] - 1);j >= 0; j--) {
+            if (is_tail(get_board_at(state, (unsigned int)i, (unsigned int)j))){
+                state->snakes[snum].tail_row = i;
+                state->snakes[snum].tail_row = j;
+                find_head(state, snum);
+                state->snakes[snum].live = true;
+                snum++;
+            }
+        }
+    }
+  return state;
 }
